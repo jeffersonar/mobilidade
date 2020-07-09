@@ -13,7 +13,6 @@ public class ItinerarioPontosVo {
 	private Double lng;
 	
 	public ItinerarioPontosVo() {
-		// TODO Auto-generated constructor stub
 	}
 	
 	public ItinerarioPontosVo(Double lat, Double lng) {
@@ -34,8 +33,42 @@ public class ItinerarioPontosVo {
 	public void setLng(Double lng) {
 		this.lng = lng;
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		return "ItinerarioPontosVo [lat=" + lat + ", lng=" + lng + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((lat == null) ? 0 : lat.hashCode());
+		result = prime * result + ((lng == null) ? 0 : lng.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ItinerarioPontosVo other = (ItinerarioPontosVo) obj;
+		if (lat == null) {
+			if (other.lat != null)
+				return false;
+		} else if (!lat.equals(other.lat))
+			return false;
+		if (lng == null) {
+			if (other.lng != null)
+				return false;
+		} else if (!lng.equals(other.lng))
+			return false;
+		return true;
+	}
 	
 
 }

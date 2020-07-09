@@ -61,4 +61,12 @@ public class OnibusVo{
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
+
+	public OnibusEntity toOnibusEntity() {
+		OnibusEntity onibusEntity = new OnibusEntity();
+		onibusEntity.setCodigo(this.getCodigo());
+		onibusEntity.setNome(this.getNome());
+		onibusEntity.setId(this.getId());
+		return onibusEntity;
+	}
 }

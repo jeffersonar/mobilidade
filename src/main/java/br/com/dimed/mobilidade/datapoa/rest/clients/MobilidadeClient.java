@@ -1,6 +1,7 @@
 package br.com.dimed.mobilidade.datapoa.rest.clients;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -36,17 +38,21 @@ public class MobilidadeClient {
 	private String restServerUrl;
 
 	public List<OnibusVo> pesquisarOnibusPorNome(String nome) {
-		HttpHeaders headers = new HttpHeaders();
-		RestTemplate restTemplate = new RestTemplate();
-		UriComponents params = UriComponentsBuilder.fromHttpUrl(this.restServerUrl).queryParam("a", "nc")
-				.queryParam("t", "o").queryParam("p", nome).build();
-		MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-		converter.setSupportedMediaTypes(Collections.singletonList(MediaType.ALL));
-		restTemplate.getMessageConverters().add(converter);
-		ResponseEntity<List<OnibusVo>> response = restTemplate.exchange(params.toUriString(), HttpMethod.GET,
-				new HttpEntity<Object>(headers), new ParameterizedTypeReference<List<OnibusVo>>() {
-				});
-		return response.getBody();
+		try {
+			HttpHeaders headers = new HttpHeaders();
+			RestTemplate restTemplate = new RestTemplate();
+			UriComponents params = UriComponentsBuilder.fromHttpUrl(this.restServerUrl).queryParam("a", "nc")
+					.queryParam("t", "o").queryParam("p", nome).build();
+			MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+			converter.setSupportedMediaTypes(Collections.singletonList(MediaType.ALL));
+			restTemplate.getMessageConverters().add(converter);
+			ResponseEntity<List<OnibusVo>> response = restTemplate.exchange(params.toUriString(), HttpMethod.GET,
+					new HttpEntity<Object>(headers), new ParameterizedTypeReference<List<OnibusVo>>() {
+					});
+			return response.getBody();
+		}catch (RuntimeException e) {
+			return new ArrayList<OnibusVo>(); 
+		}
 	}
 
 	public ItinerarioVo pesquisarItinerario(BigInteger idOnibus) {

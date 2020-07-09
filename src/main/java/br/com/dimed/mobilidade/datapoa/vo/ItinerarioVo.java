@@ -2,6 +2,7 @@ package br.com.dimed.mobilidade.datapoa.vo;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.dimed.mobilidade.entity.ItinerarioEntity;
+import net.bytebuddy.asm.Advice.This;
 
 /**
  * 
@@ -39,21 +41,12 @@ public class ItinerarioVo {
 			ItinerarioVo retorno = objectMapper.readValue(novoJson, ItinerarioVo.class);
 			return retorno;
 		} catch (Exception e) {
-			return new ItinerarioVo();
+			return null;
 		}
 	}
 
 	public ItinerarioVo() {
 		// TODO Auto-generated constructor stub
-	}
-
-	public ItinerarioVo(ItinerarioEntity itinerarioEntity) {
-		this.idLinha = itinerarioEntity.getIdLinha();
-		this.nome = itinerarioEntity.getNome();
-		this.codigo= itinerarioEntity.getCodigo();
-		itinerarioEntity.getPontos().stream().forEach(item->{		
-			this.pontos.put(item.getOrdem(), new ItinerarioPontosVo(item.getLat(), item.getLng()));
-		});
 	}
 
 	public Map<Integer, ItinerarioPontosVo> getPontos() {
@@ -86,6 +79,71 @@ public class ItinerarioVo {
 
 	public void setCodigo(String codigo) {
 		this.codigo = codigo;
+	}
+
+	@Override
+	public String toString() {
+		return "ItinerarioVo [idLinha=" + idLinha + ", nome=" + nome + ", codigo=" + codigo + ", pontos=" + pontos
+				+ "]";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
+		result = prime * result + ((idLinha == null) ? 0 : idLinha.hashCode());
+		result = prime * result + ((nome == null) ? 0 : nome.hashCode());
+		result = prime * result + ((pontos == null) ? 0 : pontos.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ItinerarioVo other = (ItinerarioVo) obj;
+		if (codigo == null) {
+			if (other.codigo != null)
+				return false;
+		} else if (!codigo.equals(other.codigo))
+			return false;
+		if (idLinha == null) {
+			if (other.idLinha != null)
+				return false;
+		} else if (!idLinha.equals(other.idLinha))
+			return false;
+		if (nome == null) {
+			if (other.nome != null)
+				return false;
+		} else if (!nome.equals(other.nome))
+			return false;
+		if (pontos == null) {
+			if (other.pontos != null)
+				return false;
+		} else if (!pontos.equals(other.pontos))
+			return false;
+		return true;
+	}
+
+	public static ItinerarioVo toParseItinerarioVo(List<ItinerarioEntity> itinerarioEntity) {
+		ItinerarioVo retorno = new ItinerarioVo();
+		retorno.setPontos(new LinkedHashMap<Integer, ItinerarioPontosVo>());
+		itinerarioEntity.forEach(p->{
+			retorno.idLinha = p.getId().getIdLinha();
+			retorno.codigo= p.getOnibus().getCodigo();
+			retorno.nome = p.getOnibus().getNome();
+			ItinerarioPontosVo pontos = new ItinerarioPontosVo();
+			pontos.setLat(p.getLat());
+			pontos.setLng(p.getLng());
+			retorno.getPontos().put(p.getId().getOrdem(), pontos);
+			
+		});
+		return retorno;
 	}
 
 }
